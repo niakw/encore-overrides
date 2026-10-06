@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "id": "recommended",
+  "name": "Recommended",
+  "scope": "general",
+  "target_hardware": "PS5 standard / original model",
+  "source_platform": "Nintendo Switch 1",
+  "intent": "Best-case general profile: maximize image quality while staying within the useful 4K ceiling of a standard PS5.",
+  "settings": {
+    "renderer": "vulkan",
+    "console_mode": "docked",
+    "game_resolution": 2.0,
+    "tv_output": "2160p",
+    "upscaling_filter": "bilinear",
+    "fsr_sharpness": 50,
+    "anti_aliasing": "none",
+    "refresh_rate_hz": 60
+  },
+  "technical_basis": {
+    "source_reference": "Nintendo Switch 1 docked output up to 1920x1080 at 60 Hz",
+    "target_reference": "Standard PS5: Zen 2 8c/16t, RDNA 2-class GPU, 16 GB GDDR6",
+    "pixel_workload_vs_1x": 4.0,
+    "reasoning": [
+      "For a 1080p-class Switch render, 2.0x produces 3840x2160 internally, exactly matching 4K output.",
+      "2.0x is the practical useful ceiling for 4K output; 3.0x and 4.0x render substantially beyond the display resolution and mostly add supersampling cost.",
+      "Bilinear avoids unnecessary reconstruction when internal resolution already reaches the output target.",
+      "No global post-process AA is forced because 2.0x internal rendering already reduces edge aliasing and many Switch games implement their own AA.",
+      "60 Hz cleanly presents both native 30 FPS and 60 FPS Switch titles without changing game timing."
+    ]
+  }
+}
