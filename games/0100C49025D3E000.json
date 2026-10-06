@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "title_id": "0100C49025D3E000",
+  "name": "EA SPORTS FC 27",
+  "source_console": "Nintendo Switch 1",
+  "status": "candidate",
+  "auto_apply": false,
+  "profile": "recommended",
+  "target": {
+    "hardware": "PS5 standard",
+    "source_mode": "docked",
+    "gameplay_fps": 30
+  },
+  "settings": {
+    "renderer": "vulkan",
+    "console_mode": "docked",
+    "game_resolution": 1.25,
+    "tv_output": "1440p",
+    "upscaling_filter": "bilinear",
+    "fsr_sharpness": 50,
+    "anti_aliasing": "none",
+    "refresh_rate_hz": 60
+  },
+  "technical_basis": {
+    "switch_1_output_limit": "1920x1080@60",
+    "fc_frostbite_reference": {
+      "title": "EA SPORTS FC 24",
+      "docked_resolution": "1920x1080",
+      "frame_rate": 30,
+      "confidence": "documented"
+    },
+    "fc_25_switch_frame_rate": {
+      "frame_rate": 30,
+      "confidence": "documented"
+    },
+    "fc_27_switch_1_exact_internal_resolution": {
+      "value": null,
+      "confidence": "unknown"
+    },
+    "reasoning": [
+      "Preserve the Nintendo FC line's 30 FPS gameplay target rather than attempting to force 60 FPS.",
+      "Use Docked mode because the profile targets TV play and the source console's higher rendering mode.",
+      "At a 1080p-class source baseline, 1.25x produces approximately 2400x1350, close to 2560x1440 output.",
+      "1.25x uses about 69.4% of the pixel count of 1.5x, preserving substantially more GPU and memory headroom.",
+      "Bilinear is preferred because only a small final scale remains between approximately 1350p internal and 1440p output.",
+      "FSR is not selected because the profile is not reconstructing a low-resolution image to a much higher output.",
+      "Additional FXAA/SMAA is disabled until objective game-specific evidence shows that another post-process AA pass is beneficial.",
+      "60 Hz provides an exact 2:1 presentation cadence for a 30 FPS gameplay target."
+    ]
+  },
+  "validation": {
+    "state": "pending",
+    "protocol": "validation/0100C49025D3E000.md"
+  }
+}
