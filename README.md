@@ -120,6 +120,21 @@ Its profiles are:
 
 FC27 remains a 30 FPS-targeted Switch title, so every profile uses 60 Hz output for clean 2:1 presentation cadence.
 
+## Automation
+
+New Switch releases are discovered automatically by `tools/sync_switch_games.py`.
+
+The weekly workflow:
+
+- enumerates the current global Switch base-game Title IDs;
+- ignores every Title ID that already has a file under `games/`;
+- enriches only missing games with title metadata and official Eden compatibility overrides;
+- gives new titles the four current general Encore profiles;
+- never overwrites an existing per-game JSON;
+- commits only when new titles are found.
+
+See [docs/AUTOMATION.md](docs/AUTOMATION.md).
+
 ## Files
 
 ```text
