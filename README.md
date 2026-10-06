@@ -2,85 +2,63 @@
 
 PS5-specific game profiles for **Prospero.Eden Encore**.
 
-Encore Overrides complements, rather than replaces, Eden's own compatibility overrides:
+## Method
 
-- **Eden overrides** fix emulator/game compatibility issues that can apply across multiple platforms.
-- **Encore overrides** tune games for Encore's fixed PS5 environment and expose practical per-game profiles.
+Every profile is derived in this order:
 
-## Goals
+1. **Source console hardware** — for current games, Nintendo Switch 1.
+2. **The game's documented target on that console** — frame rate, rendering resolution/mode when reliably measured, engine behaviour.
+3. **Encore/Eden emulation overhead** on a standard PS5.
+4. **PS5 headroom** used to improve image quality only while preserving gameplay and stability.
+5. **Real-hardware validation** before automatic application.
 
-- Recommended settings by Switch Title ID.
-- PS5-specific `Recommended`, `Performance`, and `Quality` profiles.
-- Explicit validation state so experimental data is never presented as proven.
-- Known-problem combinations and game-specific notes.
-- Versioned, machine-readable data that Encore can cache locally and refresh without requiring a full app release.
-- Offline fallback: Encore can ship a known-good snapshot of this database.
+Personal observations are **not** used to author the initial candidate. They are only used afterward to validate or reject it.
 
-## Repository layout
+## Status
 
-```text
-games/
-  <TITLE_ID>.json
-schema/
-  encore-override.schema.json
-tools/
-  validate.py
-manifest.json
-.github/workflows/validate.yml
-```
+For now this repository deliberately contains **one candidate game only**:
 
-## Profile precedence
+- EA SPORTS FC 27 — `0100C49025D3E000`
 
-Encore should resolve settings in this order:
+We will validate this methodology before expanding to other Switch games.
 
-```text
-Encore factory/global settings
-        ↓
-Eden compatibility override
-        ↓
-Encore game profile
-        ↓
-User per-game override
-```
+## FC 27 candidate
 
-A user override always wins. Selecting or editing values outside an authored Encore profile should surface as **Custom** in the UI.
+| Setting | Recommended candidate |
+| --- | --- |
+| Renderer | Vulkan |
+| Console mode | Docked |
+| Game resolution | **1.25x** |
+| TV output | **1440p** |
+| Upscaling | **Bilinear** |
+| Anti-aliasing | **None** |
+| Refresh | **60 Hz** |
+| Target | **stable 30 FPS** |
 
-## Validation states
+### Why 1.25x / 1440p?
 
-- `experimental` — useful starting point, not yet fully hardware-qualified.
-- `testing` — actively being measured/retested on PS5.
-- `validated` — profile has passed the repository's validation requirements on the declared firmware/Encore build.
-- `deprecated` — retained for history but should not be selected automatically.
+The Frostbite-era Switch version of FC 24 is documented at 1080p docked / 30 FPS, while FC 25 remains a 30 FPS title on Switch. FC 27's exact Switch 1 internal resolution has not yet been independently established, so it is not invented here.
 
-Profiles also carry an individual confidence level: `provisional`, `tested`, or `validated`.
+Using the documented 1080p Frostbite baseline as an engineering reference:
 
-## Supported settings (schema v1)
+- 1.00x ≈ 1920×1080
+- **1.25x ≈ 2400×1350**
+- 1.50x ≈ 2880×1620
 
-The first schema intentionally mirrors the settings Encore currently exposes per game:
+2400×1350 is already very close to a 2560×1440 output, so 1.25x + Bilinear requires little reconstruction. Moving to 1.50x computes about **44% more pixels** than 1.25x, for a smaller visual gain and less emulation headroom.
 
-- renderer: Vulkan / OpenGL
-- TV output: 1080p / 1440p / 2160p
-- game resolution: 0.25x through 4x
-- upscaling filter: Bilinear / AMD FSR / Bicubic / Nearest
-- FSR sharpness: 0–100
-- anti-aliasing: None / FXAA / SMAA
-- refresh rate: 60 / 120 Hz
-- console mode: Docked / Handheld
+No extra FXAA/SMAA is enabled by default because the candidate should not add another post-process AA pass without game-specific evidence that it improves the image.
 
-Low-level Eden internals are deliberately excluded until Encore exposes and validates a safe PS5 use case for them.
+## Files
 
-## First game
+- `games/0100C49025D3E000.json` — machine-readable candidate.
+- `SOURCES.md` — technical evidence used to derive it.
+- `validation/0100C49025D3E000.md` — hardware test protocol.
 
-The initial entry is **EA SPORTS FC 27** (`0100C49025D3E000`). It is deliberately marked **experimental** while PS5 stability and image-quality work continues.
+## Rule
 
-## Consuming the database
+Candidate profiles use `auto_apply: false`.
 
-Encore should fetch `manifest.json`, verify `schema_version`, then load the matching file from `games/`.
+Only after repeatable real-PS5 testing may a profile become `validated` and be considered for automatic application.
 
-The application should keep the last valid local copy and fail closed to bundled/default settings if downloaded data is malformed or targets an unsupported schema.
-
-## Relationship with Eden
-
-This repository is not affiliated with or endorsed by the Eden project. It is a PS5-specific companion database for Prospero.Eden Encore.
-
-No keys, firmware, games, copyrighted console data, or game assets are stored here.
+No keys, firmware, games, dumps, copyrighted game assets or save data are stored here.
