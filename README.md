@@ -1,31 +1,55 @@
 # Encore Overrides
 
-PS5-specific per-game profiles for **Prospero.Eden Encore**.
+PS5-specific global and per-game profiles for **Prospero.Eden Encore**.
 
-This repository is a **hardware-derived baseline database**, not a test registry. Profiles are authored from the source console, the game's known technical target, Encore's own PS5 presets and the fixed characteristics of a standard PS5.
+This repository is a **hardware-derived configuration database**. It provides:
 
-## Method
+- general Encore profiles used when no game-specific override exists;
+- game-specific Recommended / Smooth / Performance profiles;
+- technical evidence explaining why each baseline exists.
 
-Profiles are derived in this order:
+## Resolution order
 
-1. **Source console hardware** — Nintendo Switch 1 for the current database.
-2. **Game target on source hardware** — frame rate, docked/handheld mode and measured rendering characteristics when trustworthy data exists.
-3. **Standard PS5 hardware** — fixed CPU/GPU/memory target.
-4. **Encore/Eden emulation overhead** — preserve headroom rather than treating PS5/Switch raw-spec ratios as a direct resolution multiplier.
-5. **Encore's built-in presets** — use them as conservative PS5 reference points.
-6. **Game-specific profile adjustment** — Recommended, Smooth and Performance.
+Encore should resolve profiles in this order:
 
-Profiles are usable baselines and may be auto-applied. They do not require a validation gate.
+```text
+Encore general profile
+        ↓
+game-specific encore-overrides profile
+        ↓
+user manual per-game settings
+```
 
-## EA SPORTS FC 27
+The most specific layer wins.
 
-Title ID: `0100C49025D3E000`
+## General profiles
 
-The Switch Frostbite FC line targets **30 FPS**, with FC 24 documented at **1080p docked / 720p handheld** and FC 25 remaining at 30 FPS. FC 27's exact Switch 1 internal pixel count is not claimed when no reliable direct measurement exists.
+The general files live in:
 
-### Recommended
+```text
+general/
+  recommended.json
+  smooth.json
+  performance.json
+```
 
-Best balance of graphics, playability and stability.
+They are derived from Nintendo Switch 1 hardware, a standard/original PS5 and the settings actually exposed by Encore/Eden.
+
+### Recommended — best-case / maximum useful quality
+
+| Setting | Value |
+| --- | --- |
+| Renderer | Vulkan |
+| Console mode | Docked |
+| Game resolution | **2x** |
+| TV output | **2160p** |
+| Upscaling | Bilinear |
+| Anti-aliasing | None |
+| Refresh | 60 Hz |
+
+For a 1080p-class docked Switch render, 2x produces **3840×2160**, exactly matching 4K output. This is the useful general ceiling: 3x and 4x render beyond a 4K display and mainly spend GPU/memory on supersampling.
+
+### Smooth — high quality with large headroom
 
 | Setting | Value |
 | --- | --- |
@@ -33,17 +57,13 @@ Best balance of graphics, playability and stability.
 | Console mode | Docked |
 | Game resolution | **1.25x** |
 | TV output | **1440p** |
-| Upscaling | **Bilinear** |
-| FSR sharpness | 50% — inactive with Bilinear |
-| Anti-aliasing | **FXAA** |
-| Refresh | **60 Hz** |
-| Gameplay target | **30 FPS** |
+| Upscaling | Bilinear |
+| Anti-aliasing | FXAA |
+| Refresh | 60 Hz |
 
-This starts from Encore's built-in Recommended preset and changes only the internal scale from 1x to 1.25x.
+For a 1080p-class source, 1.25x is approximately **2400×1350**, already close to 1440p while using only **39.1% of the internal pixel workload of 2x**.
 
-### Smooth
-
-Prioritizes consistent frame pacing while preserving a native-class internal render scale.
+### Performance — native-class fallback
 
 | Setting | Value |
 | --- | --- |
@@ -51,40 +71,56 @@ Prioritizes consistent frame pacing while preserving a native-class internal ren
 | Console mode | Docked |
 | Game resolution | **1x** |
 | TV output | **1080p** |
-| Upscaling | **Bilinear** |
-| FSR sharpness | 50% — inactive with Bilinear |
-| Anti-aliasing | **None** |
-| Refresh | **60 Hz** |
-| Gameplay target | **30 FPS** |
+| Upscaling | Bilinear |
+| Anti-aliasing | None |
+| Refresh | 60 Hz |
 
-### Performance
+The general Performance profile deliberately stays at 1x rather than degrading every unknown game to 0.75x. A demanding game can override this with 0.75x + FSR when justified.
 
-Maximizes GPU headroom while keeping a usable 1080p image.
+## Why no global 3x / 4x?
 
-| Setting | Value |
-| --- | --- |
-| Renderer | Vulkan |
-| Console mode | Docked |
-| Game resolution | **0.75x** |
-| TV output | **1080p** |
-| Upscaling | **AMD FSR** |
-| FSR sharpness | **40%** |
-| Anti-aliasing | **None** |
-| Refresh | **60 Hz** |
-| Gameplay target | **30 FPS** |
+Encore exposes those scales, but they are not sensible general defaults.
 
-## Profile behavior
+Relative internal pixel workload:
 
-- `Recommended` is the default profile.
-- `Smooth` reduces presentation/internal load without dropping below 1x.
-- `Performance` deliberately drops to 0.75x and enables FSR reconstruction.
-- A user's manual per-game settings should always override this database.
-- No profile attempts to force a 60 FPS game simulation when the Switch title itself targets 30 FPS.
+| Scale | Pixel workload vs 1x |
+| --- | ---: |
+| 1x | 1.00× |
+| 1.25x | 1.56× |
+| 1.5x | 2.25× |
+| 2x | 4.00× |
+| 3x | 9.00× |
+| 4x | 16.00× |
+
+A 1080p-class title already reaches 4K at 2x. Going above that is supersampling and should be treated as a game-specific experiment, not a general PS5 profile.
+
+## Game overrides
+
+Game-specific profiles live under `games/<TITLE_ID>.json` and replace the matching general profile when present.
+
+Current game-specific entry:
+
+- **EA SPORTS FC 27** — `0100C49025D3E000`
+
+FC27 uses its own lighter profiles because its Frostbite workload and 30 FPS target justify a different balance than the best-case global ceiling.
+
+## Method
+
+Profiles are derived from:
+
+1. source-console hardware and output characteristics;
+2. known game rendering target when a game override exists;
+3. standard PS5 CPU/GPU/memory characteristics;
+4. Encore/Eden's actual exposed renderer, scale, output, filter, AA and refresh settings;
+5. preservation of emulator headroom rather than raw-spec multiplication.
+
+No user-specific observations are required to author the general profiles.
 
 ## Files
 
-- `manifest.json` — database index.
+- `manifest.json` — database index and general fallback mapping.
+- `general/*.json` — global Encore profiles.
 - `games/<TITLE_ID>.json` — game-specific profiles.
-- `SOURCES.md` — technical evidence used to derive profiles.
+- `SOURCES.md` — technical evidence.
 
 No keys, firmware, games, dumps, copyrighted game assets or save data are stored here.
