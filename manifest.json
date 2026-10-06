@@ -1,6 +1,15 @@
 {
   "schema_version": 1,
-  "database_revision": 2,
+  "database_revision": 3,
+  "general_profiles": {
+    "default_profile": "recommended",
+    "fallback_when_no_game_override": true,
+    "profiles": {
+      "recommended": "general/recommended.json",
+      "smooth": "general/smooth.json",
+      "performance": "general/performance.json"
+    }
+  },
   "entries": [
     {
       "title_id": "0100C49025D3E000",
