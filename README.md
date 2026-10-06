@@ -33,6 +33,17 @@ user manual per-game settings
 
 The most specific layer wins.
 
+## Global controller profile
+
+Encore also defines one global **PlayStation Auto** controller profile in `general/controls.json`.
+
+It keeps two mappings and selects the active one at runtime without hard-coding a game:
+
+- **UI / menus** — `A → Cross`, `B → Circle`, `X → Square`, `Y → Triangle`;
+- **gameplay** — physical Switch positions: `A → Circle`, `B → Cross`, `X → Triangle`, `Y → Square`.
+
+The detector starts in UI mode, switches to gameplay after sustained stick/trigger activity, and returns to UI after explicit menu/navigation evidence with hysteresis. **Switch**, **Custom PS5** and **Custom Switch** remain fixed and are never rewritten automatically. Per-game overrides may tune or disable the detector only when a title is atypical.
+
 ## General profiles
 
 ### Minimum
@@ -139,6 +150,7 @@ See [docs/AUTOMATION.md](docs/AUTOMATION.md).
 
 ```text
 general/
+  controls.json
   minimum.json
   recommended.json
   high.json

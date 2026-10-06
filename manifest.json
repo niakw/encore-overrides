@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "database_revision": 5,
+  "database_revision": 6,
   "profile_order": [
     "minimum",
     "recommended",
@@ -125920,5 +125920,6 @@
         "ultra"
       ]
     }
-  ]
+  ],
+  "controls_profile": "general/controls.json"
 }
