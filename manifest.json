@@ -1,13 +1,20 @@
 {
   "schema_version": 1,
-  "database_revision": 3,
+  "database_revision": 4,
+  "profile_order": [
+    "minimum",
+    "recommended",
+    "high",
+    "ultra"
+  ],
   "general_profiles": {
     "default_profile": "recommended",
     "fallback_when_no_game_override": true,
     "profiles": {
+      "minimum": "general/minimum.json",
       "recommended": "general/recommended.json",
-      "smooth": "general/smooth.json",
-      "performance": "general/performance.json"
+      "high": "general/high.json",
+      "ultra": "general/ultra.json"
     }
   },
   "entries": [
@@ -19,9 +26,10 @@
       "auto_apply": true,
       "default_profile": "recommended",
       "profiles": [
+        "minimum",
         "recommended",
-        "smooth",
-        "performance"
+        "high",
+        "ultra"
       ]
     }
   ]
