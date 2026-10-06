@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "id": "performance",
+  "name": "Performance",
+  "scope": "general",
+  "target_hardware": "PS5 standard / original model",
+  "source_platform": "Nintendo Switch 1",
+  "intent": "Preserve the source console's native-class rendering load and maximize emulator frame-time headroom without reconstructing from below-native resolution.",
+  "settings": {
+    "renderer": "vulkan",
+    "console_mode": "docked",
+    "game_resolution": 1.0,
+    "tv_output": "1080p",
+    "upscaling_filter": "bilinear",
+    "fsr_sharpness": 50,
+    "anti_aliasing": "none",
+    "refresh_rate_hz": 60
+  },
+  "technical_basis": {
+    "source_reference": "Nintendo Switch 1 docked output up to 1920x1080 at 60 Hz",
+    "target_reference": "Standard PS5",
+    "pixel_workload_vs_1x": 1.0,
+    "reasoning": [
+      "1.0x preserves the source game's intended docked-class internal scale instead of degrading below native by default.",
+      "1080p output matches the Switch 1 docked output ceiling and minimizes presentation overhead.",
+      "Bilinear is the lowest-overhead general scaling path.",
+      "No additional AA is forced, preserving maximum GPU headroom and avoiding redundant post-processing.",
+      "Game-specific overrides may still use 0.75x + FSR when a particular title is unusually demanding."
+    ]
+  }
+}
