@@ -18,7 +18,7 @@
     "tv_output": "1440p",
     "upscaling_filter": "bilinear",
     "fsr_sharpness": 50,
-    "anti_aliasing": "none",
+    "anti_aliasing": "fxaa",
     "refresh_rate_hz": 60
   },
   "technical_basis": {
@@ -37,14 +37,25 @@
       "value": null,
       "confidence": "unknown"
     },
+    "encore_reference_profile": {
+      "name": "Recommended",
+      "renderer": "vulkan",
+      "tv_output": "1440p",
+      "game_resolution": 1.0,
+      "upscaling_filter": "bilinear",
+      "fsr_sharpness": 50,
+      "anti_aliasing": "fxaa",
+      "refresh_rate_hz": 60
+    },
     "reasoning": [
       "Preserve the Nintendo FC line's 30 FPS gameplay target rather than attempting to force 60 FPS.",
       "Use Docked mode because the profile targets TV play and the source console's higher rendering mode.",
+      "Start from Encore's conservative Recommended profile and change only the internal game resolution from 1.0x to 1.25x.",
       "At a 1080p-class source baseline, 1.25x produces approximately 2400x1350, close to 2560x1440 output.",
       "1.25x uses about 69.4% of the pixel count of 1.5x, preserving substantially more GPU and memory headroom.",
       "Bilinear is preferred because only a small final scale remains between approximately 1350p internal and 1440p output.",
-      "FSR is not selected because the profile is not reconstructing a low-resolution image to a much higher output.",
-      "Additional FXAA/SMAA is disabled until objective game-specific evidence shows that another post-process AA pass is beneficial.",
+      "FSR is not selected because the profile is not reconstructing a low-resolution image to a much higher output; fsr_sharpness remains stored at Encore's 50% default but is inactive.",
+      "FXAA is retained from Encore's Recommended preset as the conservative anti-aliasing choice rather than introducing the heavier SMAA path.",
       "60 Hz provides an exact 2:1 presentation cadence for a 30 FPS gameplay target."
     ]
   },
