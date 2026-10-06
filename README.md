@@ -1,74 +1,90 @@
 # Encore Overrides
 
-PS5-specific game profiles for **Prospero.Eden Encore**.
+PS5-specific per-game profiles for **Prospero.Eden Encore**.
+
+This repository is a **hardware-derived baseline database**, not a test registry. Profiles are authored from the source console, the game's known technical target, Encore's own PS5 presets and the fixed characteristics of a standard PS5.
 
 ## Method
 
-Every profile is derived in this order:
+Profiles are derived in this order:
 
-1. **Source console hardware** — for current games, Nintendo Switch 1.
-2. **The game's documented target on that console** — frame rate, rendering resolution/mode when reliably measured, engine behaviour.
-3. **Encore/Eden emulation overhead** on a standard PS5.
-4. **Encore's own conservative presets** as the safe PS5 baseline.
-5. **PS5 headroom** used to improve image quality only while preserving gameplay and stability.
-6. **Real-hardware validation** before automatic application.
+1. **Source console hardware** — Nintendo Switch 1 for the current database.
+2. **Game target on source hardware** — frame rate, docked/handheld mode and measured rendering characteristics when trustworthy data exists.
+3. **Standard PS5 hardware** — fixed CPU/GPU/memory target.
+4. **Encore/Eden emulation overhead** — preserve headroom rather than treating PS5/Switch raw-spec ratios as a direct resolution multiplier.
+5. **Encore's built-in presets** — use them as conservative PS5 reference points.
+6. **Game-specific profile adjustment** — Recommended, Smooth and Performance.
 
-Personal observations are **not** used to author the initial candidate. They are only used afterward to validate or reject it.
+Profiles are usable baselines and may be auto-applied. They do not require a validation gate.
 
-## Status
+## EA SPORTS FC 27
 
-For now this repository deliberately contains **one candidate game only**:
+Title ID: `0100C49025D3E000`
 
-- EA SPORTS FC 27 — `0100C49025D3E000`
+The Switch Frostbite FC line targets **30 FPS**, with FC 24 documented at **1080p docked / 720p handheld** and FC 25 remaining at 30 FPS. FC 27's exact Switch 1 internal pixel count is not claimed when no reliable direct measurement exists.
 
-We will validate this methodology before expanding to other Switch games.
+### Recommended
 
-## FC 27 candidate — frozen for validation
+Best balance of graphics, playability and stability.
 
-| Setting | Recommended candidate |
+| Setting | Value |
 | --- | --- |
 | Renderer | Vulkan |
 | Console mode | Docked |
 | Game resolution | **1.25x** |
 | TV output | **1440p** |
 | Upscaling | **Bilinear** |
-| FSR sharpness | **50% (inactive with Bilinear)** |
+| FSR sharpness | 50% — inactive with Bilinear |
 | Anti-aliasing | **FXAA** |
 | Refresh | **60 Hz** |
-| Target | **stable 30 FPS** |
+| Gameplay target | **30 FPS** |
 
-The candidate starts from Encore's own **Recommended** preset:
+This starts from Encore's built-in Recommended preset and changes only the internal scale from 1x to 1.25x.
 
-`Vulkan / 1440p / 1x / Bilinear / FXAA / 60 Hz`
+### Smooth
 
-and deliberately changes only one major rendering parameter:
+Prioritizes consistent frame pacing while preserving a native-class internal render scale.
 
-`1x → 1.25x internal resolution`
+| Setting | Value |
+| --- | --- |
+| Renderer | Vulkan |
+| Console mode | Docked |
+| Game resolution | **1x** |
+| TV output | **1080p** |
+| Upscaling | **Bilinear** |
+| FSR sharpness | 50% — inactive with Bilinear |
+| Anti-aliasing | **None** |
+| Refresh | **60 Hz** |
+| Gameplay target | **30 FPS** |
 
-### Why 1.25x / 1440p?
+### Performance
 
-The Frostbite-era Switch version of FC 24 is documented at 1080p docked / 30 FPS, while FC 25 remains a 30 FPS title on Switch. FC 27's exact Switch 1 internal resolution has not yet been independently established, so it is not invented here.
+Maximizes GPU headroom while keeping a usable 1080p image.
 
-Using the documented 1080p Frostbite baseline as an engineering reference:
+| Setting | Value |
+| --- | --- |
+| Renderer | Vulkan |
+| Console mode | Docked |
+| Game resolution | **0.75x** |
+| TV output | **1080p** |
+| Upscaling | **AMD FSR** |
+| FSR sharpness | **40%** |
+| Anti-aliasing | **None** |
+| Refresh | **60 Hz** |
+| Gameplay target | **30 FPS** |
 
-- 1.00x ≈ 1920×1080
-- **1.25x ≈ 2400×1350**
-- 1.50x ≈ 2880×1620
+## Profile behavior
 
-2400×1350 is already very close to a 2560×1440 output, so 1.25x + Bilinear requires little reconstruction. Moving to 1.50x computes about **44% more pixels** than 1.25x, for a smaller visual gain and less emulation headroom.
-
-FXAA is retained from Encore's Recommended preset. SMAA is not introduced in the candidate because the goal is to improve internal image detail while retaining Encore's conservative rendering path.
+- `Recommended` is the default profile.
+- `Smooth` reduces presentation/internal load without dropping below 1x.
+- `Performance` deliberately drops to 0.75x and enables FSR reconstruction.
+- A user's manual per-game settings should always override this database.
+- No profile attempts to force a 60 FPS game simulation when the Switch title itself targets 30 FPS.
 
 ## Files
 
-- `games/0100C49025D3E000.json` — machine-readable candidate.
-- `SOURCES.md` — technical evidence used to derive it.
-- `validation/0100C49025D3E000.md` — hardware test protocol.
-
-## Rule
-
-Candidate profiles use `auto_apply: false`.
-
-Only after repeatable real-PS5 testing may a profile become `validated` and be considered for automatic application.
+- `manifest.json` — database index.
+- `games/<TITLE_ID>.json` — game-specific profiles.
+- `SOURCES.md` — technical evidence used to derive profiles.
 
 No keys, firmware, games, dumps, copyrighted game assets or save data are stored here.
