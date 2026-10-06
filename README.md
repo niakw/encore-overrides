@@ -9,8 +9,9 @@ Every profile is derived in this order:
 1. **Source console hardware** — for current games, Nintendo Switch 1.
 2. **The game's documented target on that console** — frame rate, rendering resolution/mode when reliably measured, engine behaviour.
 3. **Encore/Eden emulation overhead** on a standard PS5.
-4. **PS5 headroom** used to improve image quality only while preserving gameplay and stability.
-5. **Real-hardware validation** before automatic application.
+4. **Encore's own conservative presets** as the safe PS5 baseline.
+5. **PS5 headroom** used to improve image quality only while preserving gameplay and stability.
+6. **Real-hardware validation** before automatic application.
 
 Personal observations are **not** used to author the initial candidate. They are only used afterward to validate or reject it.
 
@@ -22,7 +23,7 @@ For now this repository deliberately contains **one candidate game only**:
 
 We will validate this methodology before expanding to other Switch games.
 
-## FC 27 candidate
+## FC 27 candidate — frozen for validation
 
 | Setting | Recommended candidate |
 | --- | --- |
@@ -31,9 +32,18 @@ We will validate this methodology before expanding to other Switch games.
 | Game resolution | **1.25x** |
 | TV output | **1440p** |
 | Upscaling | **Bilinear** |
-| Anti-aliasing | **None** |
+| FSR sharpness | **50% (inactive with Bilinear)** |
+| Anti-aliasing | **FXAA** |
 | Refresh | **60 Hz** |
 | Target | **stable 30 FPS** |
+
+The candidate starts from Encore's own **Recommended** preset:
+
+`Vulkan / 1440p / 1x / Bilinear / FXAA / 60 Hz`
+
+and deliberately changes only one major rendering parameter:
+
+`1x → 1.25x internal resolution`
 
 ### Why 1.25x / 1440p?
 
@@ -47,7 +57,7 @@ Using the documented 1080p Frostbite baseline as an engineering reference:
 
 2400×1350 is already very close to a 2560×1440 output, so 1.25x + Bilinear requires little reconstruction. Moving to 1.50x computes about **44% more pixels** than 1.25x, for a smaller visual gain and less emulation headroom.
 
-No extra FXAA/SMAA is enabled by default because the candidate should not add another post-process AA pass without game-specific evidence that it improves the image.
+FXAA is retained from Encore's Recommended preset. SMAA is not introduced in the candidate because the goal is to improve internal image detail while retaining Encore's conservative rendering path.
 
 ## Files
 
