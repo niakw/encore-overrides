@@ -3,64 +3,94 @@
   "title_id": "0100C49025D3E000",
   "name": "EA SPORTS FC 27",
   "source_console": "Nintendo Switch 1",
-  "status": "candidate",
-  "auto_apply": false,
-  "profile": "recommended",
-  "target": {
-    "hardware": "PS5 standard",
-    "source_mode": "docked",
-    "gameplay_fps": 30
-  },
-  "settings": {
-    "renderer": "vulkan",
-    "console_mode": "docked",
-    "game_resolution": 1.25,
-    "tv_output": "1440p",
-    "upscaling_filter": "bilinear",
-    "fsr_sharpness": 50,
-    "anti_aliasing": "fxaa",
-    "refresh_rate_hz": 60
+  "target_hardware": "PS5 standard",
+  "status": "baseline",
+  "auto_apply": true,
+  "default_profile": "recommended",
+  "gameplay_target_fps": 30,
+  "profiles": {
+    "recommended": {
+      "intent": "Best balance of image quality, playability and stability for normal TV play.",
+      "settings": {
+        "renderer": "vulkan",
+        "console_mode": "docked",
+        "game_resolution": 1.25,
+        "tv_output": "1440p",
+        "upscaling_filter": "bilinear",
+        "fsr_sharpness": 50,
+        "anti_aliasing": "fxaa",
+        "refresh_rate_hz": 60
+      },
+      "notes": [
+        "Starts from Encore Recommended and raises only internal resolution from 1.0x to 1.25x.",
+        "At a 1080p-class docked source, 1.25x is approximately 2400x1350, already close to 2560x1440 output.",
+        "Bilinear keeps the scaling path light because only a small final resize remains.",
+        "FXAA is retained from Encore Recommended as the low-cost anti-aliasing choice.",
+        "FSR sharpness is stored at Encore's 50% default but is inactive while Bilinear is selected."
+      ]
+    },
+    "smooth": {
+      "intent": "Maximum frame-time headroom without lowering the source game's native-class rendering scale.",
+      "settings": {
+        "renderer": "vulkan",
+        "console_mode": "docked",
+        "game_resolution": 1.0,
+        "tv_output": "1080p",
+        "upscaling_filter": "bilinear",
+        "fsr_sharpness": 50,
+        "anti_aliasing": "none",
+        "refresh_rate_hz": 60
+      },
+      "notes": [
+        "Keeps the game at 1.0x while matching the documented 1080p-class docked baseline of the Frostbite FC Switch line.",
+        "1080p output removes unnecessary presentation scaling cost.",
+        "No extra post-process AA is added, preserving GPU headroom and image clarity."
+      ]
+    },
+    "performance": {
+      "intent": "Maximum practical GPU headroom while preserving a usable 1080p TV image.",
+      "settings": {
+        "renderer": "vulkan",
+        "console_mode": "docked",
+        "game_resolution": 0.75,
+        "tv_output": "1080p",
+        "upscaling_filter": "fsr",
+        "fsr_sharpness": 40,
+        "anti_aliasing": "none",
+        "refresh_rate_hz": 60
+      },
+      "notes": [
+        "0.75x cuts internal pixel workload to 56.25% of 1.0x.",
+        "FSR is appropriate here because the lower-resolution image must be reconstructed to 1080p output.",
+        "40% sharpness is intentionally moderate to recover detail without making FSR sharpening the dominant image characteristic.",
+        "No additional FXAA/SMAA is layered after FSR."
+      ]
+    }
   },
   "technical_basis": {
-    "switch_1_output_limit": "1920x1080@60",
-    "fc_frostbite_reference": {
-      "title": "EA SPORTS FC 24",
-      "docked_resolution": "1920x1080",
-      "frame_rate": 30,
-      "confidence": "documented"
+    "switch_1": {
+      "soc": "NVIDIA custom Tegra",
+      "memory_class": "4 GB LPDDR4-class",
+      "tv_output_limit": "1920x1080@60"
     },
-    "fc_25_switch_frame_rate": {
-      "frame_rate": 30,
-      "confidence": "documented"
+    "fc_frostbite_switch_reference": {
+      "fc24_docked_resolution": "1920x1080",
+      "fc24_frame_rate": 30,
+      "fc25_frame_rate": 30,
+      "fc27_exact_internal_resolution": null
     },
-    "fc_27_switch_1_exact_internal_resolution": {
-      "value": null,
-      "confidence": "unknown"
+    "ps5_standard": {
+      "cpu": "8-core / 16-thread Zen 2",
+      "gpu": "RDNA 2-class, approximately 10.3 TFLOPS",
+      "memory": "16 GB GDDR6"
     },
-    "encore_reference_profile": {
-      "name": "Recommended",
-      "renderer": "vulkan",
-      "tv_output": "1440p",
-      "game_resolution": 1.0,
-      "upscaling_filter": "bilinear",
-      "fsr_sharpness": 50,
-      "anti_aliasing": "fxaa",
-      "refresh_rate_hz": 60
-    },
-    "reasoning": [
-      "Preserve the Nintendo FC line's 30 FPS gameplay target rather than attempting to force 60 FPS.",
-      "Use Docked mode because the profile targets TV play and the source console's higher rendering mode.",
-      "Start from Encore's conservative Recommended profile and change only the internal game resolution from 1.0x to 1.25x.",
-      "At a 1080p-class source baseline, 1.25x produces approximately 2400x1350, close to 2560x1440 output.",
-      "1.25x uses about 69.4% of the pixel count of 1.5x, preserving substantially more GPU and memory headroom.",
-      "Bilinear is preferred because only a small final scale remains between approximately 1350p internal and 1440p output.",
-      "FSR is not selected because the profile is not reconstructing a low-resolution image to a much higher output; fsr_sharpness remains stored at Encore's 50% default but is inactive.",
-      "FXAA is retained from Encore's Recommended preset as the conservative anti-aliasing choice rather than introducing the heavier SMAA path.",
-      "60 Hz provides an exact 2:1 presentation cadence for a 30 FPS gameplay target."
+    "design_rules": [
+      "Preserve the game's 30 FPS target instead of attempting to force 60 FPS.",
+      "Use Docked mode for TV profiles so the game exposes its higher source-console rendering mode.",
+      "Use 60 Hz output for exact 2:1 presentation cadence at 30 FPS.",
+      "Prefer native or near-output internal resolution before introducing reconstruction.",
+      "Use FSR only when the internal scale is deliberately reduced below 1.0x.",
+      "Profiles are hardware-derived baselines and are applied without a validation gate."
     ]
-  },
-  "validation": {
-    "state": "pending",
-    "protocol": "validation/0100C49025D3E000.md"
   }
 }
