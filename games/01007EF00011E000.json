@@ -4,13 +4,13 @@
   "name": "The Legend of Zelda™: Breath of the Wild",
   "source_console": "Nintendo Switch 1",
   "target_hardware": "PS5 standard",
-  "status": "baseline",
+  "status": "auto-baseline",
   "auto_apply": true,
   "default_profile": "recommended",
-  "gameplay_target_fps": 30,
   "profiles": {
     "minimum": {
       "name": "Minimum",
+      "profile_source": "general/minimum.json",
       "settings": {
         "renderer": "vulkan",
         "console_mode": "docked",
@@ -20,87 +20,81 @@
         "fsr_sharpness": 50,
         "anti_aliasing": "none",
         "refresh_rate_hz": 60
-      },
-      "notes": [
-        "Keeps BOTW at its native Switch-class internal scale.",
-        "The source game already applies its own FXAA in docked mode, so Encore does not add another AA pass."
-      ]
+      }
     },
     "recommended": {
       "name": "Recommandé",
+      "profile_source": "general/recommended.json",
+      "settings": {
+        "renderer": "vulkan",
+        "console_mode": "docked",
+        "game_resolution": 1.25,
+        "tv_output": "1440p",
+        "upscaling_filter": "bilinear",
+        "fsr_sharpness": 50,
+        "anti_aliasing": "fxaa",
+        "refresh_rate_hz": 60
+      }
+    },
+    "high": {
+      "name": "Haute",
+      "profile_source": "general/high.json",
       "settings": {
         "renderer": "vulkan",
         "console_mode": "docked",
         "game_resolution": 1.5,
-        "tv_output": "1440p",
-        "upscaling_filter": "bilinear",
+        "tv_output": "2160p",
+        "upscaling_filter": "bicubic",
         "fsr_sharpness": 50,
-        "anti_aliasing": "none",
+        "anti_aliasing": "fxaa",
         "refresh_rate_hz": 60
-      },
-      "notes": [
-        "BOTW renders at 1600x900 in docked mode on Switch.",
-        "1.5x gives approximately 2400x1350, very close to a 2560x1440 output.",
-        "Bilinear is sufficient for the small remaining scale and keeps the path light.",
-        "No extra Encore AA is layered over BOTW's own docked-mode FXAA."
-      ]
+      }
     },
-    "high": {
-      "name": "Haute",
+    "ultra": {
+      "name": "Ultra",
+      "profile_source": "general/ultra.json",
       "settings": {
         "renderer": "vulkan",
         "console_mode": "docked",
         "game_resolution": 2.0,
         "tv_output": "2160p",
-        "upscaling_filter": "bicubic",
-        "fsr_sharpness": 50,
-        "anti_aliasing": "none",
-        "refresh_rate_hz": 60
-      },
-      "notes": [
-        "2.0x raises BOTW from 1600x900 to approximately 3200x1800.",
-        "Bicubic scales the remaining 1800p image to 2160p without introducing an additional FSR sharpening stage.",
-        "The game remains at its original 30 FPS simulation target."
-      ]
-    },
-    "ultra": {
-      "name": "Ultra",
-      "settings": {
-        "renderer": "vulkan",
-        "console_mode": "docked",
-        "game_resolution": 3.0,
-        "tv_output": "2160p",
         "upscaling_filter": "bilinear",
         "fsr_sharpness": 50,
         "anti_aliasing": "none",
         "refresh_rate_hz": 60
-      },
-      "notes": [
-        "3.0x produces approximately 4800x2700 internally from BOTW's 900p docked base.",
-        "This is intentional supersampling down to 4K and is therefore the quality ceiling rather than the default.",
-        "3.0x costs 9x the native pixel workload, so it is reserved for Ultra."
-      ]
+      }
     }
   },
   "technical_data": {
     "catalog": {
       "source": "ch0c01dxyz/nsw-titledb",
-      "regions": ["US", "FR", "JP"],
-      "languages": ["en", "fr", "ja"],
+      "regions": [
+        "US",
+        "FR",
+        "JP"
+      ],
+      "languages": [
+        "en",
+        "fr",
+        "ja"
+      ],
       "publisher": "Nintendo",
-      "release_dates": ["20170303"],
-      "nsu_ids": ["70010000000025", "70010000000023", "70010000000026", "70010000047360"]
+      "release_dates": [
+        "20170303"
+      ],
+      "nsu_ids": [
+        "70010000000025",
+        "70010000000023",
+        "70010000000026",
+        "70010000047360"
+      ]
     },
     "source_game": {
-      "docked_resolution": "1600x900",
-      "handheld_resolution": "1280x720",
-      "target_fps": 30,
-      "docked_game_aa": "FXAA",
-      "confidence": "documented",
-      "evidence": [
-        "Nintendo: Switch version renders at 900p on TV and targets 30 FPS.",
-        "Switch mod documentation confirms an FXAA pass is applied by the game in docked mode."
-      ]
+      "docked_resolution": null,
+      "handheld_resolution": null,
+      "target_fps": null,
+      "confidence": "unknown",
+      "rule": "Do not infer game-specific resolution or FPS without a trusted source."
     },
     "switch_1": {
       "platform": "Nintendo Switch 1",
@@ -118,17 +112,21 @@
     },
     "eden": {
       "official_overrides_source": "eden-emulator/eden-overrides",
-      "compatibility_overrides": [],
-      "note": "No official Eden override for 01007EF00011E000 was present when this profile was authored."
+      "compatibility_overrides": []
     },
     "encore": {
-      "profile_model": ["minimum", "recommended", "high", "ultra"],
-      "profile_origin": "game-specific technical baseline",
+      "profile_model": [
+        "minimum",
+        "recommended",
+        "high",
+        "ultra"
+      ],
+      "profile_origin": "general baseline",
       "manual_user_override_wins": true
     }
   },
   "generated": {
-    "generator": "manual game-specific enrichment",
-    "policy": "game-specific baseline supersedes automatic general fallback"
+    "generator": "tools/sync_switch_games.py",
+    "policy": "new-title-only; existing repository entries are never rewritten"
   }
 }

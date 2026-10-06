@@ -62630,7 +62630,7 @@
       "title_id": "01007EF00011E000",
       "name": "The Legend of Zelda™: Breath of the Wild",
       "path": "games/01007EF00011E000.json",
-      "status": "baseline",
+      "status": "auto-baseline",
       "auto_apply": true,
       "default_profile": "recommended",
       "profiles": [
