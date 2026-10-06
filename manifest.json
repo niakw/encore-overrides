@@ -1,14 +1,19 @@
 {
   "schema_version": 1,
-  "database_revision": 1,
+  "database_revision": 2,
   "entries": [
     {
       "title_id": "0100C49025D3E000",
       "name": "EA SPORTS FC 27",
       "path": "games/0100C49025D3E000.json",
-      "profile": "recommended",
-      "status": "candidate",
-      "auto_apply": false
+      "status": "baseline",
+      "auto_apply": true,
+      "default_profile": "recommended",
+      "profiles": [
+        "recommended",
+        "smooth",
+        "performance"
+      ]
     }
   ]
 }
