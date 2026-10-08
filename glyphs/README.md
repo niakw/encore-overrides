@@ -1,38 +1,45 @@
-# Visual PlayStation glyphs (in-game artwork) — curated rules
+# Eden Encore — in-game PlayStation button graphics
 
-Eden Encore now reads a separate catalogue alongside the existing video/performance profiles:
+This is the **visual asset** compatibility catalogue, beside
+`encore-overrides` performance profiles. It never changes DualSense
+input mappings.
 
-    glyphs/manifest.json
+Source of truth: [`glyphs/manifest.json`](manifest.json), schema **2**.
 
-It is a compatibility list for **visible graphics drawn by each Switch game**,
-not the DualSense controller mapping. No native Nintendo assets are shipped.
+A future **verified** rule:
 
-A verified title rule looks like:
+```json
+{
+  "title_id": "0100123456789000",
+  "update_version": "v1.2.0"
+}
+```
 
-    {"title_id":"0100123456789000",
-     "update_version":"v1.2.0",
-     "build_id":"0123456789ABCDEF0123456789ABCDEF01234567"}
+*Illustrative data only.* There are currently **no qualified titles**.
+Do not add real rules until a compatible, legally redistributable
+PlayStation replacement for game artwork has been tested.
 
-The IDs above are illustrative only and **must not be added** as a real rule.
-Only add a title after its exact update version and build identity are known
-and a legally distributable PlayStation graphic replacement pack has been
-tested. The catalogue currently contains **zero verified titles**.
+The Title ID identifies a game. The update/display version identifies
+the resource release used by that game. **No Build ID is required**:
+the NSO executable Build ID can change with updates and is relevant to
+executable-dependent cheats/patches, whereas these overrides replace
+specific RomFS **graphic files**.
 
-Eden Encore syncs this manifest to data/glyph-overrides.json and generates
-headless/glyph_overrides_generated.h with
-tools/sync-glyph-overrides.py --source /path/to/encore-overrides.
+A proposed pack includes per-file **original RomFS SHA-256** and
+**replacement SHA-256**, independently checked when the pack is staged.
+Eden compares the installed pack's title and update version with the
+running game's known update version, then uses its existing RomFS
+LayeredFS mod loader to substitute the verified artwork. If information
+is missing or a version is incompatible, it retains the Nintendo art.
 
-On PS5, only a matching installed LayeredFS RomFS graphics pack named
-Eden Encore PS Glyphs can become active. Missing packs, unknown version,
-or unsupported title always retain the original Nintendo game prompts.
-A separate global setting (/appearance/ingame_button_glyphs) and optional
-per-title setting (/games/TITLE/ingame_button_glyphs) accept 'playstation'
-(default) or 'switch'. Neither changes what DualSense buttons do.
+The existing one-command `tools/sync-encore-overrides.py` pipeline in
+Prospero.Eden-Encore also exports these rules into the embedded C++
+snapshot. A newer runtime JSON can be used without recompiling.
 
-**Important limit:** The current Eden metadata bridge can read the latest
-update's display version, not attest the actual running program's build ID.
-The installer independently checked the original dumped RomFS graphic hashes
-when staging the pack, but native effective-build verification is still
-required before this is a production-grade automatic visual feature.
-Unverified title updates, gameplay glyph coverage, and firmware testing
-remain tracked at https://github.com/niakw/Prospero.Eden-Encore/issues/7.
+**Current limitations:** No real in-game PlayStation atlas is distributed;
+the source verifier checks a legally extracted original atlas during
+staging, *not* the active game's unpatched resource bytes on PS5.
+Eden must further validate base-game versions, update discovery,
+safe automatic distribution, actual hardware rendering and UI opt-out
+before claiming that any supported game automatically changes prompts.
+See [Issue #7](https://github.com/niakw/Prospero.Eden-Encore/issues/7).
