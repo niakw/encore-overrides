@@ -44,6 +44,8 @@ def audit():
                 assert filt not in VULKAN_ONLY_SPATIAL,(title,tier,filt)
                 assert aa not in VULKAN_ONLY_AA,(title,tier,aa)
             if status=="auto-baseline":
+                if tier=="recommended":
+                    assert filt=="fsr", (title,tier,"old Bilinear baseline must not regress")
                 # Generated profiles without game measurements cannot opt
                 # all titles into previously untested shaders.
                 assert filt not in {"sgsr","sgsr_edge"},(title,tier,filt)
